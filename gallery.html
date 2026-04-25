@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | Tejas</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Load Database File -->
+    <script src="gallery-data.js"></script>
+
+    <style>
+        .page-header {
+            padding-top: 8rem;
+            padding-bottom: 2rem;
+            text-align: center;
+        }
+
+        .gallery-grid {
+            columns: 3 300px;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .gallery-card {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            background: var(--color-surface);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border-color: var(--color-accent);
+        }
+
+        .gallery-card .media-wrapper {
+            position: relative;
+            width: 100%;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .gallery-card.video-card .media-wrapper {
+            padding-top: 56.25%;
+            /* 16:9 ratio fixed for Video iframes */
+            display: block;
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .gallery-card iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            transition: transform 0.6s ease;
+        }
+
+        .gallery-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .gallery-card .info {
+            padding: 1.5rem;
+        }
+
+        .info-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            letter-spacing: 1.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-title {
+            font-size: 1.25rem;
+            font-family: var(--font-heading);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .info-date {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .overlay-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(8, 8, 8, 0.8);
+            border: 1px solid var(--color-accent);
+            color: var(--color-text);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .gallery-card:hover .overlay-btn {
+            opacity: 1;
+        }
+
+        /* Detail Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--color-surface);
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-body {
+            display: flex;
+            flex-wrap: wrap;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .modal-media {
+            flex: 1 1 500px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .modal-media img {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
+
+        .modal-media iframe {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            border: none;
+        }
+
+        .modal-details {
+            flex: 1 1 300px;
+            padding: 2.5rem;
+            background: var(--color-surface);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            z-index: 2010;
+            background: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .modal-close:hover {
+            background: var(--color-accent);
+            color: #000;
+        }
+
+        .detail-item {
+            margin-bottom: 1.2rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--color-accent);
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            color: #eaeaea;
+        }
+
+        .credit-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--color-border);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">TEJAS</div>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="portfolio.html">CV</a></li>
+            <li><a href="gallery.html" class="active">Gallery</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="admin.html">Admin</a></li>
+        </ul>
+    </nav>
+
+    <header class="page-header container reveal active">
+        <h1 class="text-accent">Media Gallery</h1>
+        <p>A dynamic showcase of my latest photos, videos, and projects.</p>
+    </header>
+
+    <section class="container reveal active">
+        <!-- Gallery Grid -->
+        <div class="gallery-grid" id="galleryContainer">
+            <!-- Items injected via JS -->
+        </div>
+
+        <div id="emptyState" class="text-center text-muted"
+            style="display: none; margin-top: 4rem; padding-bottom: 2rem;">
+            <p>No media found in the gallery.</p>
+            <a href="admin.html" style="color:var(--color-accent); text-decoration:underline;">Upload some media to get
+                started!</a>
+        </div>
+
+        <div style="margin-top:4rem; margin-bottom:4rem; text-align:center; clear:both;">
+            <a href="admin.html" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.8rem 2rem;">+ Add Media to Gallery</a>
+        </div>
+    </section>
+
+    <!-- Project Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()">&times;</div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamically filled -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hamburger logic
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        if (hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+        }
+
+        // Initialize Data
+        const container = document.getElementById('galleryContainer');
+        const emptyState = document.getElementById('emptyState');
+        let fullData = [];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Load base data from gallery-data.js (galleryData variable)
+            const baseData = typeof galleryData !== 'undefined' ? galleryData : [];
+
+            // Load user uploads from LocalStorage
+            const uploads = JSON.parse(localStorage.getItem('gallery_user_uploads')) || [];
+
+            // Load natively masked / deleted items
+            const deletedItems = JSON.parse(localStorage.getItem('gallery_deleted_items')) || [];
+
+            // Merge both and filter out any ID representing a deleted mask
+            fullData = [...uploads, ...baseData].filter(item => !deletedItems.includes(item.id));
+
+            if (fullData.length === 0) {
+                emptyState.style.display = 'block';
+            } else {
+                renderGallery(fullData);
+            }
+        });
+
+        function renderGallery(items) {
+            container.innerHTML = '';
+            items.forEach((item, index) => {
+                const isVideo = item.type === 'video';
+
+                // Format Date
+                let displayDate = item.date;
+                if (item.date) {
+                    const d = new Date(item.date);
+                    displayDate = isNaN(d.getTime()) ? item.date : d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+                }
+
+                // Determine Media Content for Cover
+                let mediaElement = '';
+                if (isVideo) {
+                    let srcUrl = item.media_url || '';
+                    // Native Video file support natively injected
+                    if (srcUrl.match(/\.(mp4|webm|ogg|mov)$/i)) {
+                        mediaElement = `<video src="${srcUrl}" controls style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:contain; background:#000;" onclick="event.stopPropagation()"></video>`;
+                    } else {
+                        // YouTube embed support mapping
+                        if (srcUrl.includes('youtube.com/watch?v=')) {
+                            srcUrl = srcUrl.replace('watch?v=', 'embed/');
+                        } else if (srcUrl.includes('youtu.be/')) {
+                            srcUrl = srcUrl.replace('youtu.be/', 'youtube.com/embed/');
+                        }
+                        if (srcUrl.includes('youtube.com')) {
+                            if (!srcUrl.includes('controls=')) srcUrl += (srcUrl.includes('?') ? '&' : '?') + 'controls=1';
+                            if (!srcUrl.includes('enablejsapi=')) srcUrl += '&enablejsapi=1';
+                        }
+                        mediaElement = `<iframe src="${srcUrl}" allowfullscreen></iframe>`;
+                    }
+                } else {
+                    mediaElement = `<img src="${item.media_url}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Not+Found'">`;
+                }
+
+                const cardHtml = `
+                    <div class="gallery-card ${isVideo ? 'video-card' : ''}" ${!isVideo ? `onclick="openModal(${index})"` : ''}>
+                        <div class="media-wrapper">
+                            ${mediaElement}
+                            ${!isVideo ? '<div class="overlay-btn">View Details</div>' : ''}
+                        </div>
+                        <div class="info" ${isVideo ? `onclick="openModal(${index})"` : ''}>
+                            <div class="info-category">${isVideo ? 'Video' : 'Photography'}</div>
+                            ${item.title ? `<h3 class="info-title">${item.title}</h3>` : ''}
+                            ${displayDate && displayDate.trim() !== "" ? `<div class="info-date">${displayDate}</div>` : ''}
+                            ${item.description ? `<p class="text-muted" style="font-size:0.9rem; margin:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${item.description}</p>` : ''}
+                            ${isVideo ? '<div style="margin-top:1.2rem;"><button class="btn btn-outline" style="font-size:0.75rem; padding: 0.4rem 1rem;">View Details</button></div>' : ''}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHtml;
+            });
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('detailModal');
+        const modalBody = document.getElementById('modalBody');
+
+        function openModal(index) {
+            // Immediately pause grid videos before pop-up
+            pauseAllVideos();
+
+            const item = fullData[index];
+            const isVideo = item.type === 'video';
+
+            // Right side: Details & Credits
+            const creds = item.credits || {};
+
+            // Build credits conditionally (only show if filled)
+            let creditsHtml = '';
+            const addCredit = (label, value) => {
+                if (value && value.trim() !== '') {
+                    creditsHtml += `<div class="detail-item"><span class="detail-label">${label}</span><span class="detail-value">${value}</span></div>`;
+                }
+            };
+
+            addCredit('Director', creds.director);
+            addCredit('Production', creds.production);
+            addCredit('Timeline', creds.timeline);
+            addCredit('My Role', creds.role);
+
+            // Left side media
+            let mediaElement = '';
+            if (isVideo) {
+                let srcUrl = item.media_url || '';
+                if (srcUrl.match(/\.(mp4|webm|ogg|mov)$/i)) {
+                    mediaElement = `<video src="${srcUrl}" controls style="width:100%; max-height:70vh; object-fit:contain;"></video>`;
+                } else {
+                    if (srcUrl.includes('youtube.com/watch?v=')) {
+                        srcUrl = srcUrl.replace('watch?v=', 'embed/');
+                    } else if (srcUrl.includes('youtu.be/')) {
+                        srcUrl = srcUrl.replace('youtu.be/', 'youtube.com/embed/');
+                    }
+                    if (srcUrl.includes('youtube.com')) {
+                        if (!srcUrl.includes('enablejsapi=')) srcUrl += (srcUrl.includes('?') ? '&' : '?') + 'enablejsapi=1';
+                    }
+                    mediaElement = `<iframe src="${srcUrl}" allowfullscreen></iframe>`;
+                }
+            } else {
+                mediaElement = `<img src="${item.media_url}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/800x600?text=Image+Not+Found'">`;
+            }
+
+            modalBody.innerHTML = `
+                <div class="modal-media">
+                    ${mediaElement}
+                </div>
+                <div class="modal-details">
+                    <div class="info-category">${isVideo ? 'Video Project' : 'Photography Set'}</div>
+                    ${item.title ? `<h2 style="font-size: 2rem; margin-bottom: 0.5rem; line-height: 1.1;">${item.title}</h2>` : ''}
+                    ${item.date ? `<p class="text-muted" style="font-size: 0.9rem; margin-bottom: 2rem;">${item.date}</p>` : ''}
+                    
+                    ${(item.description && item.description.trim() !== '') ?
+                    `<div class="detail-item">
+                        <span class="detail-label">Description</span>
+                        <div class="detail-value" style="font-size:0.95rem; line-height: 1.6;">${item.description}</div>
+                    </div>` : ''}
+
+                    ${(creds.project_desc && creds.project_desc.trim() !== '') ?
+                    `<div class="detail-item" style="margin-top:1.5rem;">
+                            <span class="detail-label">Project Background</span>
+                            <div class="detail-value" style="font-size:0.95rem; line-height: 1.6;">${creds.project_desc}</div>
+                        </div>` : ''}
+
+                    ${creditsHtml ? `<div class="credit-grid">${creditsHtml}</div>` : ''}
+
+                    ${(creds.link && creds.link.trim() !== '') ?
+                    `<div style="margin-top: 2rem;">
+                            <a href="${creds.link}" target="_blank" class="btn btn-outline" style="width: 100%; text-align:center; box-sizing:border-box;">Open Link</a>
+                        </div>` : ''}
+                </div>
+            `;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            // Stop videos from playing gracefully
+            const iframe = modalBody.querySelector('iframe');
+            if (iframe) iframe.src = iframe.src;
+            const video = modalBody.querySelector('video');
+            if (video) video.pause();
+
+            document.body.style.overflow = '';
+        }
+
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closeModal();
+        });
+
+        // Escape key to close modal
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Escape" && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // ==========================================
+        // SINGLE VIDEO PLAYBACK MANAGER
+        // ==========================================
+
+        function pauseAllVideos(exceptSourceWindow = null, exceptVideoElement = null) {
+            // Pause all native <video> elements
+            document.querySelectorAll('video').forEach(v => {
+                if (v !== exceptVideoElement) v.pause();
+            });
+
+            // Pause all YouTube iframes gracefully
+            document.querySelectorAll('iframe').forEach(ifr => {
+                if (ifr.contentWindow !== exceptSourceWindow) {
+                    try {
+                        ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    } catch (e) { }
+                }
+            });
+        }
+
+        // Listener for NATIVE HTML5 videos
+        document.addEventListener('play', function (e) {
+            if (e.target.tagName === 'VIDEO') {
+                pauseAllVideos(null, e.target);
+            }
+        }, true);
+
+        // Listener for YOUTUBE nested iframes via API messages
+        window.addEventListener('message', function (e) {
+            try {
+                // Parse message from iframe
+                const data = JSON.parse(e.data);
+                // state=1 means 'playing' in YouTube API
+                if (data.event === 'infoDelivery' && data.info && data.info.playerState === 1) {
+                    pauseAllVideos(e.source, null);
+                }
+            } catch (err) {
+                // non-JSON message, safely ignore
+            }
+        });
+
+    </script>
+</body>
+
+</html>

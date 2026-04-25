@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Media | Tejas</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Load Database File -->
+    <script src="gallery-data.js"></script>
+    <script src="cv-data.js"></script>
+    <script src="blog-data.js"></script>
+    <style>
+        .upload-container {
+            max-width: 800px;
+            margin: 8rem auto 4rem;
+            background: var(--color-surface);
+            padding: 2.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 700px) {
+            .form-grid { grid-template-columns: 1fr; }
+        }
+        .input-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-accent);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #111;
+            color: #fff;
+            font-family: var(--font-body);
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+        .input-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        .section-title {
+            grid-column: 1 / -1;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .code-output {
+            background: #000;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            color: #0f0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 2rem;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .copy-btn {
+            margin-top: 1rem;
+            display: none;
+            width: 100%;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #333;
+            margin: 2rem 0;
+            grid-column: 1 / -1;
+        }
+
+        /* Delete Modal Styles */
+        .delete-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+        .delete-item {
+            position: relative;
+            background: #000;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+        }
+        .delete-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .delete-item .delete-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center; justify-content: center;
+            opacity: 0;
+            transition: 0.3s;
+        }
+        .delete-item:hover .delete-overlay { opacity: 1; }
+        .btn-danger {
+            background-color: #ff4444; color: #fff; border:1px solid #ff0000; padding: 0.5rem 1rem; cursor: pointer; border-radius: 4px; font-weight: bold;
+        }
+        .btn-danger:hover { background-color: #cc0000; }
+        
+        /* Master Login Screen */
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #888;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            border-bottom: 2px solid transparent;
+            font-family: var(--font-header);
+        }
+        .tab-btn.active {
+            color: var(--color-accent);
+            border-bottom: 2px solid var(--color-accent);
+        }
+        .admin-tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .admin-tab-content.active {
+            display: block;
+        }
+        .master-login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: var(--color-bg);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-login-box {
+            background: var(--color-surface);
+            padding: 3rem;
+            border-radius: 12px;
+            border: 1px solid var(--color-accent);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+        .close-login {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+        .close-login:hover {
+            color: #fff;
+        }
+
+        /* Password Visibility Toggle */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrapper input {
+            padding-right: 40px !important;
+        }
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            cursor: pointer;
+            color: #888;
+            font-size: 1.2rem;
+            user-select: none;
+            transition: color 0.3s;
+        }
+        .eye-icon:hover {
+            color: var(--color-accent);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Default Login Screen -->
+    <div id="masterLogin" class="master-login-overlay">
+        <div class="admin-login-box">
+            <a href="index.html" class="close-login" title="Return to Home">&times;</a>
+            <h2 class="text-accent" style="margin-bottom: 0.5rem; font-size: 2rem;">Admin Access</h2>
+            <p class="text-muted" style="margin-bottom: 2rem; font-size:0.9rem;">Please authenticate to access the media manager.</p>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="text" id="loginId" placeholder="Admin ID" required>
+                </div>
+                <div class="input-group password-wrapper">
+                    <input type="password" id="loginPass" placeholder="Admin Password" required>
+                    <span class="eye-icon" onclick="togglePassword('loginPass', this)">👁️</span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; padding: 0.8rem;">Access Dashboard</button>
+            </form>
+            <p id="loginError" style="color:#ff4444; margin-top:1rem; display:none; font-size:0.85rem;">Incorrect credentials. Access denied.</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" style="display:none;" id="mainNav">
+        <div class="logo">TEJAS</div>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="portfolio.html">CV</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="admin.html" class="active">Admin</a></li>
+        </ul>
+    </nav>
+
+    <div class="container reveal active" id="masterPanel" style="display:none;">
+        <div class="upload-container" style="max-width: 900px;">
+            <h1 class="text-center text-accent" style="font-size: 2.2rem; margin-bottom: 1.5rem;">Admin Dashboard</h1>
+            
+            <div class="admin-tabs" style="display:flex; border-bottom: 1px solid #333; margin-bottom:2rem; gap:1rem; overflow-x: auto;">
+                <button class="tab-btn active" onclick="switchThemeTab('media')">Media Gallery</button>
+                <button class="tab-btn" onclick="switchThemeTab('cv')">CV Editor</button>
+                <button class="tab-btn" onclick="switchThemeTab('blog')">Blog Manager</button>
+            </div>
+
+            <!-- Tab 1: Media -->
+            <div id="tab-media" class="admin-tab-content active">
+
+            <!-- Change Credentials Section -->
+            <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 8px; margin-bottom: 2.5rem; border: 1px dashed #555;">
+                <h3 class="section-title" style="margin-top:0; border:none; padding:0; font-size:1rem; color:var(--color-accent); cursor:pointer;" onclick="document.getElementById('changeCredsBody').style.display = document.getElementById('changeCredsBody').style.display === 'none' ? 'block' : 'none'">
+                    ⚙️ Change Admin ID & Password (Click to toggle)
+                </h3>
+                <div id="changeCredsBody" style="display:none; margin-top: 1rem;">
+                    <form id="changeCredsForm">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label>New Admin ID</label>
+                                <input type="text" id="newAdminId" required>
+                            </div>
+                            <div class="input-group">
+                                <label>New Admin Password</label>
+                                <div class="password-wrapper">
+                                    <input type="password" id="newAdminPass" required>
+                                    <span class="eye-icon" onclick="togglePassword('newAdminPass', this)">👁️</span>
+                                </div>
+                            </div>
+                            <div class="full-width">
+                                <button type="submit" class="btn btn-outline" style="width:100%; font-size:0.8rem;">Update Credentials</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <p class="text-center text-muted" style="margin-bottom: 2rem;">
+                Fill out the details below. This will instantly save the media locally to your browser so it shows up in your Gallery.
+            </p>
+            
+            <form id="uploadForm">
+                <div class="form-grid">
+                    
+                    <h3 class="section-title">Media Details (Optional)</h3>
+                    
+                    <div class="input-group">
+                        <label>Media Type</label>
+                        <select id="mediaType">
+                            <option value="photo">Photo</option>
+                            <option value="video">Video</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Media File Name / Video URL</label>
+                        <input type="text" id="mediaUrl" placeholder="e.g. pic7.jpeg OR https://youtube.com/embed/...">
+                        <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 4px;">For photos, place the image file in your folder and type its exact name here.</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Title</label>
+                        <input type="text" id="mediaTitle" placeholder="e.g. Neon City Portraits">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Date & Time</label>
+                        <input type="datetime-local" id="mediaDate">
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Description</label>
+                        <textarea id="mediaDescription" placeholder="Write a short description..."></textarea>
+                    </div>
+
+                    <h3 class="section-title">Credits & Extras (Optional)</h3>
+                    
+                    <div class="input-group">
+                        <label>Director</label>
+                        <input type="text" id="creditDirector" placeholder="e.g. Jane Doe">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Production</label>
+                        <input type="text" id="creditProduction" placeholder="e.g. Tejas Media">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Timeline / Duration</label>
+                        <input type="text" id="creditTimeline" placeholder="e.g. 2 Days">
+                    </div>
+
+                    <div class="input-group">
+                        <label>My Role</label>
+                        <input type="text" id="creditRole" placeholder="e.g. Lead Editor">
+                    </div>
+
+                    <div class="input-group">
+                        <label>External Link (Portfolio / IMDb)</label>
+                        <input type="url" id="creditLink" placeholder="https://...">
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Extended Project Description</label>
+                        <textarea id="creditProjectDesc" placeholder="Any additional background info..."></textarea>
+                    </div>
+
+                    <div class="full-width" style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 6px;">Submit Media</button>
+                    </div>
+                </div>
+            </form>
+
+            <div id="successMessage" style="display: none; padding: 1rem; background: rgba(50,205,50,0.1); border: 1px solid #32cd32; color: #32cd32; border-radius: 6px; margin-top: 2rem; text-align: center;">
+                Media saved locally! You can now view it on the <a href="gallery.html" style="text-decoration: underline;">Gallery Page</a>.
+            </div>
+
+            <h3 class="section-title" id="codeTitle" style="display:none; margin-top: 3rem;">Permanent Save Code (Optional)</h3>
+            <p id="codeDesc" style="display:none; color: var(--color-text-muted); font-size: 0.9rem;">
+                If you are ready to permanently save these objects, copy the code below and place it into your <code>gallery-data.js</code> file.
+            </p>
+            <div id="codeOutput" class="code-output"></div>
+            <button id="copyBtn" class="btn btn-outline copy-btn">Copy to Clipboard</button>
+            <button id="clearBtn" class="btn btn-outline copy-btn" style="border-color: #ff4444; color: #ff4444; margin-top: 1rem;">Clear All Local Uploads</button>
+            
+            <hr>
+            <button onclick="openDeleteManager()" class="btn btn-outline" style="width: 100%; border-color: #ffaa00; color: #ffaa00;">Manage & Delete Media</button>
+            </div> <!-- CLOSE TAB 1 -->
+
+            <!-- Tab 2: CV -->
+            <div id="tab-cv" class="admin-tab-content">
+                <p class="text-muted" style="margin-bottom: 1.5rem;">Edit your public CV information. Changes are instantly saved locally.</p>
+                <form id="cvForm">
+                    <div class="form-grid">
+                        <h3 class="section-title">Profile & Contact</h3>
+                        <div class="input-group"><label>Name</label><input type="text" id="cvName"></div>
+                        <div class="input-group"><label>Email</label><input type="email" id="cvEmail"></div>
+                        <div class="input-group"><label>Location</label><input type="text" id="cvLocation"></div>
+                        <div class="input-group"><label>Socials</label><input type="text" id="cvSocials"></div>
+                        
+                        <h3 class="section-title">About Me</h3>
+                        <div class="input-group full-width"><textarea id="cvAbout" rows="4"></textarea></div>
+
+                        <h3 class="section-title">Physical Details</h3>
+                        <div class="input-group"><label>Height</label><input type="text" id="cvHeight"></div>
+                        <div class="input-group"><label>Weight</label><input type="text" id="cvWeight"></div>
+                        <div class="input-group"><label>Age</label><input type="text" id="cvAge"></div>
+
+                        <h3 class="section-title">Training & Languages</h3>
+                        <div class="input-group"><label>Institution</label><input type="text" id="cvInstitution"></div>
+                        <div class="input-group"><label>Mentor</label><input type="text" id="cvMentor"></div>
+                        <div class="input-group full-width"><label>Languages</label><input type="text" id="cvLanguages"></div>
+                        <div class="input-group full-width"><label>Skills</label><input type="text" id="cvSkills"></div>
+
+                        <h3 class="section-title">Acting Experience (On Screen)</h3>
+                        <div class="input-group full-width">
+                            <label>List items (1 per line)</label>
+                            <textarea id="cvActing" rows="5"></textarea>
+                        </div>
+
+                        <h3 class="section-title">Theatre Experience</h3>
+                        <div class="input-group full-width"><label>Theatre Meta Text (Subheading)</label><input type="text" id="cvTheatreMeta"></div>
+                        <div class="input-group full-width">
+                            <label>List items (1 per line)</label>
+                            <textarea id="cvTheatre" rows="5"></textarea>
+                        </div>
+
+                        <div class="full-width" style="margin-top: 1rem;">
+                            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 6px;">Save CV Data Locally</button>
+                            <button type="button" class="btn btn-outline" style="width: 100%; border-radius: 6px; margin-top:0.5rem; border-color:#ff4444; color:#ff4444;" onclick="resetCvData()">Reset to Base Defaults</button>
+                        </div>
+                    </div>
+                </form>
+                <div id="cvSuccess" style="display:none; color:#32cd32; text-align:center; padding:1rem; border:1px solid #32cd32; background:rgba(50,205,50,0.1); margin-top:2rem;">CV Updated! Refresh your CV page to see changes.</div>
+                
+                <h3 class="section-title" style="margin-top: 3rem;">Permanent Save Code</h3>
+                 <p class="text-muted" style="margin-bottom:1rem; font-size: 0.9rem;">To permanently save, copy this into <code>cv-data.js</code>.</p>
+                 <div id="cvCodeOutput" class="code-output"></div>
+            </div>
+
+            <!-- Tab 3: Blog -->
+            <div id="tab-blog" class="admin-tab-content">
+                <p class="text-muted" style="margin-bottom: 1.5rem;">Publish a new blog post. Categories automatically update filters on the Blog page.</p>
+                <form id="blogForm">
+                    <div class="form-grid">
+                        <div class="input-group"><label>Category</label><input type="text" id="blogCat" placeholder="e.g. Life Lessons" required></div>
+                        <div class="input-group"><label>Read Time</label><input type="text" id="blogRead" placeholder="e.g. 5 min read" required></div>
+                        <div class="input-group full-width"><label>Title</label><input type="text" id="blogTitle" required></div>
+                        <div class="input-group full-width"><label>Cover Image URL (local or http)</label><input type="text" id="blogImg" value="pic3.jpeg" required></div>
+                        <div class="input-group full-width"><label>Short Excerpt</label><textarea id="blogExcerpt" rows="3" required></textarea></div>
+                        <div class="input-group full-width"><label>Full Content (HTML allowed)</label><textarea id="blogContent" rows="8" placeholder="<p>Paragraph 1</p><p>Paragraph 2</p>" required></textarea></div>
+                        
+                        <div class="full-width" style="margin-top: 1rem;">
+                            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 6px;">Publish Blog Locally</button>
+                        </div>
+                    </div>
+                </form>
+                <div id="blogSuccess" style="display:none; color:#32cd32; text-align:center; padding:1rem; border:1px solid #32cd32; background:rgba(50,205,50,0.1); margin-top:2rem;">Blog Published!</div>
+                
+                <h3 class="section-title" style="margin-top: 3rem;">Permanent Save Code</h3>
+                 <p class="text-muted" style="margin-bottom:1rem; font-size: 0.9rem;">To permanently save, copy this into <code>blog-data.js</code>.</p>
+                 <div id="blogCodeOutput" class="code-output"></div>
+                 <button onclick="clearBlogUploads()" class="btn btn-outline" style="border-color:#ff4444; color:#ff4444; width:100%; margin-top:1rem;">Clear Local Blog Data</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Delete Manager Modal -->
+    <div id="deleteManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:4000; align-items:center; justify-content:center;">
+        <div style="background:var(--color-surface); padding: 2.5rem; border-radius: 8px; width:90%; max-width: 900px; max-height: 90vh; overflow:hidden; position: relative; display:flex; flex-direction:column;">
+            <button onclick="closeDeleteManager()" style="position:absolute; top:20px; right:25px; background:none; border:none; color:white; font-size:2rem; cursor:pointer;">&times;</button>
+            <h3 style="font-size: 1.8rem;">Manage & Delete Media</h3>
+            <p class="text-muted" style="margin-bottom:2rem;">Click the delete button on any item to permanently remove it from the Gallery.</p>
+            <div id="deleteGrid" class="delete-grid" style="flex:1;"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Password Visibility Toggle Logic
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if(input.type === "password") {
+                input.type = "text";
+                icon.textContent = "🙈"; 
+            } else {
+                input.type = "password";
+                icon.textContent = "👁️";
+            }
+        }
+
+        // Hamburger Menu Logic
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        if(hamburger) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+        }
+
+        // ==========================================
+        //  ADMIN AUTHENTICATION & CREDENTIALS LOGIC
+        // ==========================================
+        const DEFAULT_ID = "ThisUploadbyTEJAS";
+        const DEFAULT_PASS = "Tejas'key4uploading-cosmos143";
+
+        function getAdminCreds() {
+            return {
+                id: localStorage.getItem('admin_config_id') || DEFAULT_ID,
+                pass: localStorage.getItem('admin_config_pass') || DEFAULT_PASS
+            };
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const idInput = document.getElementById('loginId').value;
+            const passInput = document.getElementById('loginPass').value;
+            const creds = getAdminCreds();
+
+            if (idInput === creds.id && passInput === creds.pass) {
+                // Success! Reveal dashboard
+                document.getElementById('masterLogin').style.display = 'none';
+                document.getElementById('masterPanel').style.display = 'block';
+                document.getElementById('mainNav').style.display = 'flex';
+                
+                // Pre-fill the change credentials form
+                document.getElementById('newAdminId').value = creds.id;
+                document.getElementById('newAdminPass').value = creds.pass;
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        });
+
+        document.getElementById('changeCredsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if(!confirm("Are you sure you want to change the Admin ID and Password? You will need these to log in next time!")) return;
+            
+            const nId = document.getElementById('newAdminId').value;
+            const nPass = document.getElementById('newAdminPass').value;
+            
+            localStorage.setItem('admin_config_id', nId);
+            localStorage.setItem('admin_config_pass', nPass);
+            alert("Credentials updated successfully!");
+        });
+
+
+        // ==========================================
+        //  FORM UPLOAD LOGIC
+        // ==========================================
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Create media object
+            const mediaObj = {
+                id: 'media-' + Date.now(),
+                type: document.getElementById('mediaType').value,
+                media_url: document.getElementById('mediaUrl').value,
+                title: document.getElementById('mediaTitle').value,
+                date: document.getElementById('mediaDate').value,
+                description: document.getElementById('mediaDescription').value,
+                credits: {
+                    director: document.getElementById('creditDirector').value,
+                    production: document.getElementById('creditProduction').value,
+                    timeline: document.getElementById('creditTimeline').value,
+                    role: document.getElementById('creditRole').value,
+                    link: document.getElementById('creditLink').value,
+                    project_desc: document.getElementById('creditProjectDesc').value
+                }
+            };
+
+            // Get existing uploads from local storage
+            let uploads = JSON.parse(localStorage.getItem('gallery_user_uploads')) || [];
+            
+            // Add new upload
+            uploads.unshift(mediaObj); // Add to beginning
+            
+            // Save back
+            localStorage.setItem('gallery_user_uploads', JSON.stringify(uploads));
+
+            // Show success
+            document.getElementById('successMessage').style.display = 'block';
+            this.reset();
+            
+            // Show code block
+            updateCodeOutput(uploads);
+            
+            // Scroll to bottom
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        });
+
+        // Initialize code block if there are existing uploads
+        window.addEventListener('DOMContentLoaded', () => {
+            let uploads = JSON.parse(localStorage.getItem('gallery_user_uploads')) || [];
+            if(uploads.length > 0) {
+                updateCodeOutput(uploads);
+            }
+        });
+
+        function updateCodeOutput(uploads) {
+            const outBox = document.getElementById('codeOutput');
+            const codeTitle = document.getElementById('codeTitle');
+            const codeDesc = document.getElementById('codeDesc');
+            const copyBtn = document.getElementById('copyBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            outBox.style.display = 'block';
+            codeTitle.style.display = 'block';
+            codeDesc.style.display = 'block';
+            copyBtn.style.display = 'block';
+            clearBtn.style.display = 'block';
+
+            // Generate pretty JSON but formatted to easily paste into the gallery-data.js array
+            let formattedJson = JSON.stringify(uploads, null, 2);
+            // Replace outer array brackets so they can paste it directly into the array inside the file
+            formattedJson = formattedJson.substring(1, formattedJson.length - 1).trim();
+            if (formattedJson.endsWith(']')) formattedJson = formattedJson.substring(0, formattedJson.length - 1);
+            
+            outBox.textContent = "// Copy these objects into the galleryData array in gallery-data.js\n" + formattedJson + ",";
+        }
+
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const outBox = document.getElementById('codeOutput');
+            navigator.clipboard.writeText(outBox.textContent).then(() => {
+                const originalText = this.innerText;
+                this.innerText = 'Copied!';
+                setTimeout(() => { this.innerText = originalText; }, 2000);
+            });
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            if(confirm('Are you sure you want to clear all your local uploads? This cannot be undone.')) {
+                localStorage.removeItem('gallery_user_uploads');
+                window.location.reload();
+            }
+        });
+
+        // ==========================================
+        //  DELETE PLATFORM LOGIC
+        // ==========================================
+        function openDeleteManager() {
+            document.getElementById('deleteManagerModal').style.display = 'flex';
+            renderDeleteGrid();
+        }
+
+        function closeDeleteManager() {
+            document.getElementById('deleteManagerModal').style.display = 'none';
+        }
+
+        function renderDeleteGrid() {
+            const grid = document.getElementById('deleteGrid');
+            grid.innerHTML = '';
+
+            // Load Data Environment
+            const baseData = typeof galleryData !== 'undefined' ? galleryData : [];
+            const uploads = JSON.parse(localStorage.getItem('gallery_user_uploads')) || [];
+            const deletedItems = JSON.parse(localStorage.getItem('gallery_deleted_items')) || [];
+
+            const allData = [...uploads, ...baseData];
+            let renderCount = 0;
+
+            allData.forEach(item => {
+                // If it's registered as deleted, skip it natively
+                if(deletedItems.includes(item.id)) return; 
+                
+                renderCount++;
+                let mediaContent = '';
+                if(item.type === 'video') {
+                    mediaContent = `<div style="padding:1rem; text-align:center; color:#eaeaea;"><strong style="color:var(--color-accent)">VIDEO FILE</strong><br><small style="display:block; margin-top:5px; font-size:0.7rem; line-height:1.2;">${item.title || ''}</small></div>`;
+                } else {
+                    mediaContent = `<img src="${item.media_url}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/150?text=Error'">`;
+                }
+
+                grid.innerHTML += `
+                    <div class="delete-item">
+                        ${mediaContent}
+                        <div class="delete-overlay">
+                            <button class="btn-danger" onclick="deleteItem('${item.id}')">DELETE</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if(renderCount === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#888; padding:3rem;">No media left to delete.</div>`;
+            }
+        }
+
+        function deleteItem(id) {
+            if(!confirm("Warning: Are you absolutely sure you want to permanently delete this media?")) return;
+
+            // Step 1: Check if it's an un-saved user upload
+            let uploads = JSON.parse(localStorage.getItem('gallery_user_uploads')) || [];
+            const uploadIndex = uploads.findIndex(u => u.id === id);
+            
+            if(uploadIndex > -1) {
+                // Remove completely from local uploads db
+                uploads.splice(uploadIndex, 1);
+                localStorage.setItem('gallery_user_uploads', JSON.stringify(uploads));
+                // Update Code output logic silently
+                updateCodeOutput(uploads);
+            } else {
+                // Step 2: It relates to gallery-data.js so add an override mask log
+                let deletedItems = JSON.parse(localStorage.getItem('gallery_deleted_items')) || [];
+                if(!deletedItems.includes(id)) {
+                    deletedItems.push(id);
+                    localStorage.setItem('gallery_deleted_items', JSON.stringify(deletedItems));
+                }
+            }
+            
+            renderDeleteGrid(); // Sync grid natively
+            alert("Media successfully deleted. This syncs directly to your gallery page.");
+        }
+
+        // ==========================================
+        //  TAB SYSTEM LOGIC
+        // ==========================================
+        function switchThemeTab(tabName) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if(tabName === 'cv') {
+                populateCvForm();
+            }
+        }
+
+        // ==========================================
+        //  CV EDITOR LOGIC
+        // ==========================================
+        function populateCvForm() {
+            const localRaw = localStorage.getItem('cv_data');
+            const data = localRaw ? JSON.parse(localRaw) : (typeof defaultCvData !== 'undefined' ? defaultCvData : null);
+            if(!data) return;
+
+            document.getElementById('cvName').value = data.profile.name || '';
+            document.getElementById('cvEmail').value = data.profile.email || '';
+            document.getElementById('cvLocation').value = data.profile.location || '';
+            document.getElementById('cvSocials').value = data.profile.socials || '';
+            document.getElementById('cvAbout').value = data.about || '';
+            document.getElementById('cvHeight').value = data.physical.height || '';
+            document.getElementById('cvWeight').value = data.physical.weight || '';
+            document.getElementById('cvAge').value = data.physical.age || '';
+            document.getElementById('cvInstitution').value = data.training.institution || '';
+            document.getElementById('cvMentor').value = data.training.mentor || '';
+            document.getElementById('cvLanguages').value = data.languages_skills.languages || '';
+            document.getElementById('cvSkills').value = data.languages_skills.skills || '';
+            
+            document.getElementById('cvActing').value = (data.actingExperience || []).join('\n');
+            document.getElementById('cvTheatreMeta').value = data.theatreMeta || '';
+            document.getElementById('cvTheatre').value = (data.theatreExperience || []).join('\n');
+        }
+
+        function resetCvData() {
+            if(confirm("Are you sure you want to revert back to default CV values? All your local unsaved changes will be lost.")) {
+                localStorage.removeItem('cv_data');
+                populateCvForm();
+            }
+        }
+
+        document.getElementById('cvForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newData = {
+                profile: {
+                    name: document.getElementById('cvName').value,
+                    email: document.getElementById('cvEmail').value,
+                    location: document.getElementById('cvLocation').value,
+                    socials: document.getElementById('cvSocials').value
+                },
+                about: document.getElementById('cvAbout').value,
+                physical: {
+                    height: document.getElementById('cvHeight').value,
+                    weight: document.getElementById('cvWeight').value,
+                    age: document.getElementById('cvAge').value
+                },
+                training: {
+                    institution: document.getElementById('cvInstitution').value,
+                    mentor: document.getElementById('cvMentor').value
+                },
+                languages_skills: {
+                    languages: document.getElementById('cvLanguages').value,
+                    skills: document.getElementById('cvSkills').value
+                },
+                actingExperience: document.getElementById('cvActing').value.split('\n').filter(s => s.trim() !== ''),
+                theatreMeta: document.getElementById('cvTheatreMeta').value,
+                theatreExperience: document.getElementById('cvTheatre').value.split('\n').filter(s => s.trim() !== '')
+            };
+
+            localStorage.setItem('cv_data', JSON.stringify(newData));
+            document.getElementById('cvSuccess').style.display = 'block';
+            
+            const outBox = document.getElementById('cvCodeOutput');
+            outBox.style.display = 'block';
+            outBox.textContent = "const cvData = " + JSON.stringify(newData, null, 2) + ";";
+            
+            setTimeout(() => { document.getElementById('cvSuccess').style.display = 'none'; }, 3000);
+        });
+
+        // ==========================================
+        //  BLOG EDITOR LOGIC
+        // ==========================================
+        document.getElementById('blogForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const blogObj = {
+                id: 'blog-' + Date.now(),
+                category: document.getElementById('blogCat').value,
+                readTime: document.getElementById('blogRead').value,
+                title: document.getElementById('blogTitle').value,
+                image_url: document.getElementById('blogImg').value,
+                excerpt: document.getElementById('blogExcerpt').value,
+                full_content: document.getElementById('blogContent').value
+            };
+
+            let uploads = JSON.parse(localStorage.getItem('blog_user_uploads')) || [];
+            uploads.unshift(blogObj);
+            localStorage.setItem('blog_user_uploads', JSON.stringify(uploads));
+
+            document.getElementById('blogSuccess').style.display = 'block';
+            this.reset();
+            
+            updateBlogCodeOutput(uploads);
+            setTimeout(() => { document.getElementById('blogSuccess').style.display = 'none'; }, 3000);
+        });
+
+        // Initialize blog code block on load
+        window.addEventListener('DOMContentLoaded', () => {
+            let blogUploads = JSON.parse(localStorage.getItem('blog_user_uploads')) || [];
+            if(blogUploads.length > 0) {
+                updateBlogCodeOutput(blogUploads);
+            }
+        });
+
+        function updateBlogCodeOutput(uploads) {
+            const outBox = document.getElementById('blogCodeOutput');
+            outBox.style.display = 'block';
+            let formattedJson = JSON.stringify(uploads, null, 2);
+            formattedJson = formattedJson.substring(1, formattedJson.length - 1).trim();
+            if (formattedJson.endsWith(']')) formattedJson = formattedJson.substring(0, formattedJson.length - 1);
+            outBox.textContent = "// Copy these objects into the blogData array in blog-data.js\n" + formattedJson + ",";
+        }
+
+        function clearBlogUploads() {
+            if(confirm('Are you sure you want to clear all your local blog uploads?')) {
+                localStorage.removeItem('blog_user_uploads');
+                document.getElementById('blogCodeOutput').style.display = 'none';
+            }
+        }
+
+    </script>
+</body>
+</html>

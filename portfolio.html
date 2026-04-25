@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Tejas M P</title>
+    <meta name="description"
+        content="Personal website and portfolio for aspiring actor Tejas. Not just acting... becoming.">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Load Default Data -->
+    <script src="cv-data.js"></script>
+    <style>
+        .page-header {
+            padding-top: 8rem;
+            padding-bottom: 2rem;
+            text-align: center;
+        }
+
+        .cv-section {
+            background-color: var(--color-surface);
+            padding: 3rem;
+            border-radius: 8px;
+            margin-bottom: 4rem;
+        }
+
+        .cv-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .cv-item h4 {
+            color: var(--color-accent);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .cv-item ul {
+            margin: 0;
+        }
+
+        .cv-item li {
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-grid {
+            column-count: 3;
+            column-gap: 1.5rem;
+            margin-bottom: 4rem;
+        }
+
+        @media (max-width: 900px) {
+            .gallery-grid {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .gallery-grid {
+                column-count: 1;
+            }
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            transform: translateZ(0);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        /* Video cards */
+        .video-wrapper {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .play-icon {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .play-icon {
+            color: var(--color-accent);
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">TEJAS</div>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="portfolio.html" class="active">CV</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="admin.html">Admin</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header container reveal">
+        <h1 class="text-accent">Acting Portfolio & CV</h1>
+        <p>A comprehensive view of my capabilities and past work.</p>
+    </header>
+
+    <!-- CV Section -->
+    <section class="container reveal">
+        <div class="cv-section">
+            <h2 style="margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem;">
+                Curriculum Vitae</h2>
+
+            <div class="cv-grid" id="cvGridContainer">
+                <!-- Dynamically Rendered by Javascript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Videos Gallery -->
+    <section class="container reveal" id="videos">
+        <h2>Video Performances</h2>
+        <div class="slider-container" style="margin-bottom: 4rem;">
+            <div class="slider-track">
+                <div class="slider-item">
+                    <div class="card">
+                        <div class="video-wrapper">
+                            <!-- Placeholder for actual video embeds/links -->
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Theatre Monologue</h3>
+                            <p class="text-muted" style="font-size:0.9rem;">From "Krishne Gowdara Aane"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <div class="card">
+                        <div class="video-wrapper">
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Commercial Reel 2024</h3>
+                            <p class="text-muted" style="font-size:0.9rem;">Various on-screen snippets</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <div class="card">
+                        <div class="video-wrapper">
+                            <div class="play-icon">▶</div>
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Short Film Excerpt</h3>
+                            <p class="text-muted" style="font-size:0.9rem;">"Baddi Jayamma" - Tamada Studios</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <a href="media.html" class="card-more">
+                        <span>View More</span>
+                        <span class="card-more-icon">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-2">
+            <a href="media.html" class="btn btn-primary">+ View More Videos</a>
+        </div>
+    </section>
+
+    <!-- Profile Pics Gallery -->
+    <section class="container reveal" id="photos">
+        <h2>Professional Profiles & Stills</h2>
+        <div class="slider-container" style="margin-bottom: 4rem;">
+            <div class="slider-track">
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="pic1.jpeg" alt="Tejas Profile 1"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="pic2.jpeg" alt="Tejas Profile 2"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="pic3.jpeg" alt="Tejas Profile 3"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="pic4.jpeg" alt="Tejas Profile 4"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="pic5.jpeg" alt="Tejas Profile 5"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="pic6.jpeg" alt="Tejas Profile 6"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <a href="media.html" class="card-more">
+                        <span>View More</span>
+                        <span class="card-more-icon">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-2">
+            <a href="media.html" class="btn btn-primary">+ View More Photos</a>
+        </div>
+    </section>
+
+    <!-- Theatre Work Gallery -->
+    <section class="container reveal">
+        <h2>Live Theatre & Stage Work</h2>
+        <div class="slider-container" style="margin-bottom: 2rem;">
+            <div class="slider-track">
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="thpic1.jpeg" alt="Tejas Theatre 1"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="thpic2.jpeg" alt="Tejas Theatre 2"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <div class="gallery-item" style="margin-bottom:0;"><img src="thpic3.jpeg" alt="Tejas Theatre 3"
+                            class="clickable-image"></div>
+                </div>
+                <div class="slider-item">
+                    <a href="media.html" class="card-more">
+                        <span>View More</span>
+                        <span class="card-more-icon">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center" style="margin-bottom: 4rem;">
+            <a href="media.html" class="btn btn-primary">+ View More Photos</a>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('cvGridContainer');
+            if(!container) return;
+            
+            // 1. Try local storage, 2. try default cv data
+            const localRaw = localStorage.getItem('cv_data');
+            const data = localRaw ? JSON.parse(localRaw) : (typeof defaultCvData !== 'undefined' ? defaultCvData : null);
+            
+            if(!data) {
+                container.innerHTML = '<p class="text-muted">No CV data available.</p>';
+                return;
+            }
+            
+            const renderList = (arr) => arr.map(i => `<li>${i}</li>`).join('');
+
+            container.innerHTML = `
+                <div class="cv-item" style="grid-column: 1 / -1; display:flex; flex-wrap:wrap; gap: 2rem; border-bottom:1px solid #222; padding-bottom:2rem;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <h4>Profile & Contact</h4>
+                        <p><strong>Name:</strong> ${data.profile.name || ''}</p>
+                        <p><strong>Email:</strong> ${data.profile.email || ''}</p>
+                        <p><strong>Location:</strong> ${data.profile.location || ''}</p>
+                        <p><strong>Socials:</strong> ${data.profile.socials || ''}</p>
+                    </div>
+                    <div style="flex: 2; min-width: 300px;">
+                        <h4>About ME</h4>
+                        <p style="white-space: pre-wrap; line-height: 1.6;">${data.about || ''}</p>
+                    </div>
+                </div>
+
+                <div class="cv-item">
+                    <h4>Physical Details</h4>
+                    <p><strong>Height:</strong> ${data.physical.height || ''}</p>
+                    <p><strong>Weight:</strong> ${data.physical.weight || ''}</p>
+                    <p><strong>Age:</strong> ${data.physical.age || ''}</p>
+                </div>
+
+                <div class="cv-item">
+                    <h4>Training</h4>
+                    <p><strong>${data.training.institution || ''}</strong></p>
+                    <p>${data.training.mentor || ''}</p>
+                </div>
+
+                <div class="cv-item">
+                    <h4>Languages & Skills</h4>
+                    <p><strong>Languages:</strong> ${data.languages_skills.languages || ''}</p>
+                    <p style="margin-top: 0.5rem;"><strong>Skills:</strong> ${data.languages_skills.skills || ''}</p>
+                </div>
+
+                <div class="cv-item" style="grid-column: 1 / -1;">
+                    <h4>Acting Experience (On Screen)</h4>
+                    <ul style="padding-left: 1.2rem; line-height: 1.6;">
+                        ${renderList(data.actingExperience || [])}
+                    </ul>
+                </div>
+
+                <div class="cv-item" style="grid-column: 1 / -1;">
+                    <h4>Theatre Experience</h4>
+                    <p style="margin-bottom:0.5rem;"><em>${data.theatreMeta || ''}</em></p>
+                    <ul style="padding-left: 1.2rem; line-height: 1.6;">
+                        ${renderList(data.theatreExperience || [])}
+                    </ul>
+                </div>
+            `;
+        });
+    </script>
+</body>
+
+</html>

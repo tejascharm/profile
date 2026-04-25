@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tejas M P | Aspiring Actor</title>
+    <meta name="description"
+        content="Personal website and portfolio for aspiring actor Tejas. Not just acting... becoming.">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .preview-section {
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ig-card {
+            background: var(--color-surface);
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            transition: transform 0.3s;
+        }
+
+        .ig-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .ig-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ig-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .ig-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .ig-image img {
+            width: 100%;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .ig-caption {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        .social-horizontal-card {
+            background: var(--color-surface);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .social-horizontal-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-accent);
+        }
+
+        .shc-image {
+            flex: 0 0 45%;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .shc-image img {
+            width: 100%;
+            height: 100%;
+            min-height: 220px;
+            max-height: 260px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .shc-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .social-horizontal-card {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .shc-image {
+                flex: 0 0 100%;
+                width: 100%;
+            }
+        }
+
+        .blog-banner {
+            background: linear-gradient(to right, #111, #1a1a1a);
+            padding: 4rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--color-accent);
+        }
+
+        .blog-cats {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .blog-cats span {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--color-accent);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">TEJAS</div>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="portfolio.html">CV</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="admin.html">Admin</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="container hero-content">
+            <h1 class="hero-title reveal">Tejas <br>M P</h1>
+            <div class="hero-tagline reveal" style="transition-delay: 0.1s;">"Not just acting… becoming."</div>
+            <p class="hero-intro reveal" style="transition-delay: 0.2s;">
+                Aspiring actor with a strong theatre foundation and on-camera experience. Every character is a new life
+                lived. I believe in breathing truth into fiction, embracing the raw energy of performance.
+            </p>
+            <div class="reveal" style="transition-delay: 0.3s;">
+                <a href="portfolio.html" target="_blank" class="btn btn-primary">My Complete Acting CV & Portfolio</a>
+            </div>
+
+            <div class="social-links reveal" style="transition-delay: 0.4s;">
+                <a href="https://instagram.com/tejascharm" target="_blank" class="social-btn" title="Instagram">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path
+                            d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.036 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zM8 4.118a3.882 3.882 0 1 0 0 7.764 3.882 3.882 0 0 0 0-7.764zm0 6.322a2.44 2.44 0 1 1 0-4.88 2.44 2.44 0 0 1 0 4.88z" />
+                    </svg>
+                    Instagram
+                </a>
+                <a href="https://facebook.com/tejascharm" target="_blank" class="social-btn" title="Facebook">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path
+                            d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
+                    </svg>
+                    Facebook
+                </a>
+                <a href="https://x.com/tejascharm" target="_blank" class="social-btn" title="X">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                        <path
+                            d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865l8.875 11.633Z" />
+                    </svg>
+                    Twitter
+                </a>
+            </div>
+        </div>
+        <!-- Hero Background Image -->
+        <div class="hero-image-wrapper reveal" style="transition-delay: 0.5s;">
+            <img src="cutout.png" alt="Tejas Portrait">
+        </div>
+    </section>
+
+    <!-- Portfolio & Casual Photos Preview -->
+    <section class="preview-section container">
+        <div class="text-center reveal">
+            <h2 class="text-accent">Photo Portfolio Preview</h2>
+            <p class="text-muted">A glimpse consisting of my acting profiles and casual snapshots.</p>
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-track">
+                <div class="slider-item">
+                    <div class="card reveal" style="transition-delay: 0.1s;">
+                        <div class="card-img-wrapper"><img src="pic1.jpeg" alt="Profile View" class="clickable-image">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Acting Stills</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <div class="card reveal" style="transition-delay: 0.2s;">
+                        <div class="card-img-wrapper"><img src="pic2.jpeg" alt="Casual View" class="clickable-image">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Casual Expressions</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <div class="card reveal" style="transition-delay: 0.3s;">
+                        <div class="card-img-wrapper"><img src="thpic1.jpeg" alt="Live Action" class="clickable-image">
+                        </div>
+                        <div class="card-content">
+                            <h3 class="card-title">Live Theatre Action</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <a href="media.html" class="card-more reveal" style="transition-delay: 0.4s;">
+                        <span class="card-more-icon">→</span>
+                        <span>View More</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-2 reveal">
+            <a href="portfolio.html#photos" target="_blank" class="btn btn-outline">Explore Full Image Gallery</a>
+        </div>
+    </section>
+
+    <!-- Video Clips Preview -->
+    <section class="preview-section container">
+        <div class="text-center reveal">
+            <h2 class="text-accent">Video Performance Preview</h2>
+            <p class="text-muted">Excerpts from on-screen and on-stage performances.</p>
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-track" style="align-items: center;">
+                <div class="slider-item">
+                    <div class="card reveal"
+                        style="background:#000; display:flex; justify-content:center; align-items:center; aspect-ratio: 16/9; border: 1px solid #333;">
+                        <div style="font-size: 3rem; color: #fff;">▶</div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <div class="card reveal"
+                        style="background:#000; display:flex; justify-content:center; align-items:center; aspect-ratio: 16/9; border: 1px solid #333; transition-delay: 0.1s;">
+                        <div style="font-size: 3rem; color: #fff;">▶</div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <div class="card reveal"
+                        style="background:#000; display:flex; justify-content:center; align-items:center; aspect-ratio: 16/9; border: 1px solid #333; transition-delay: 0.2s;">
+                        <div style="font-size: 3rem; color: #fff;">▶</div>
+                    </div>
+                </div>
+                <div class="slider-item">
+                    <a href="media.html" class="card-more reveal" style="transition-delay: 0.3s;">
+                        <span class="card-more-icon">→</span>
+                        <span>View More</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-2 reveal">
+            <a href="portfolio.html#videos" target="_blank" class="btn btn-outline">View Complete Work Videos</a>
+        </div>
+    </section>
+
+    <!-- Social Media Embed Preview -->
+    <section class="preview-section container">
+        <div class="text-center reveal">
+            <h2 class="text-accent">Connect On Socials</h2>
+            <p class="text-muted">Latest from @tejascharm on Instagram & Facebook</p>
+        </div>
+
+        <div class="slider-container" style="max-width: 1000px; margin: 0 auto; margin-top: 4rem;">
+            <div class="slider-track">
+                <!-- Instagram -->
+                <div class="slider-item slider-item-social">
+                    <a href="https://instagram.com/tejascharm" target="_blank" class="social-horizontal-card reveal">
+                        <div class="shc-image"><img src="pic4.jpeg" alt="IG Post" class="clickable-image"></div>
+                        <div class="shc-content">
+                            <div class="ig-header" style="margin-bottom: 1.5rem;">
+                                <img src="pic3.jpeg" class="ig-avatar" alt="avatar" style="width: 50px; height: 50px;">
+                                <span class="ig-name"
+                                    style="font-size: 1.5rem; color: var(--color-accent); display: flex; align-items: center; gap: 0.5rem;">
+                                    @tejascharm
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.036 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zM8 4.118a3.882 3.882 0 1 0 0 7.764 3.882 3.882 0 0 0 0-7.764zm0 6.322a2.44 2.44 0 1 1 0-4.88 2.44 2.44 0 0 1 0 4.88z" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="ig-caption"
+                                style="font-size: 1.2rem; line-height: 1.6; font-family: var(--font-heading);">
+                                "The stage is where I find silence. Finding character truth in every movement." <br><br>
+                                <span
+                                    style="color: var(--color-accent); font-family: var(--font-body); font-size: 0.9rem;">#theatre
+                                    #actor #performer #passion</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Facebook -->
+                <div class="slider-item slider-item-social">
+                    <a href="https://facebook.com/tejascharm" target="_blank" class="social-horizontal-card reveal"
+                        style="transition-delay: 0.1s;">
+                        <div class="shc-content">
+                            <div class="ig-header" style="margin-bottom: 1.5rem;">
+                                <img src="pic3.jpeg" class="ig-avatar" alt="avatar" style="width: 50px; height: 50px;">
+                                <span class="ig-name"
+                                    style="font-size: 1.5rem; color: var(--color-accent); display: flex; align-items: center; gap: 0.5rem;">
+                                    Tejas M P
+                                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path
+                                            d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="ig-caption"
+                                style="font-size: 1.2rem; line-height: 1.6; font-family: var(--font-heading);">
+                                "Thrilled to share my look from the new Tamada Studios project. Can't wait for you all
+                                to see it on screen very soon. Stay tuned!"
+                            </div>
+                        </div>
+                        <div class="shc-image"><img src="pic5.jpeg" alt="FB Post" class="clickable-image"></div>
+                    </a>
+                </div>
+
+                <!-- More -->
+                <div class="slider-item slider-item-social">
+                    <a href="media.html" class="card-more reveal" style="transition-delay: 0.2s;">
+                        <span class="card-more-icon">→</span>
+                        <span>View More</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Preview -->
+    <section class="preview-section container reveal">
+        <div class="blog-banner">
+            <h2 class="text-accent" style="font-size: 2.5rem; margin-bottom: 0.5rem;">Thoughts & Musings</h2>
+            <p>Dive deep into my everyday thoughts on life and the industry.</p>
+
+            <div class="blog-cats">
+                <span>Spirituality</span>
+                <span>Fashion</span>
+                <span>Lifestyle</span>
+                <span>Life Lessons</span>
+                <span>Thoughts</span>
+            </div>
+
+            <a href="blog.html" target="_blank" class="btn btn-primary"
+                style="padding: 1rem 3rem; font-size: 1.1rem; border-radius: 30px;">Read My Blogs</a>
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>

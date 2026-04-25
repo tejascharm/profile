@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thoughts & Musings | Tejas</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Load Default Data -->
+    <script src="blog-data.js"></script>
+    <style>
+        .page-header {
+            padding-top: 8rem;
+            padding-bottom: 2rem;
+            text-align: center;
+        }
+
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .cat-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            background-color: transparent;
+            color: var(--color-text);
+            font-size: 0.9rem;
+            border: 1px solid var(--color-text-muted);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .cat-btn:hover,
+        .cat-btn.active {
+            background-color: var(--color-accent);
+            color: #000;
+            border-color: var(--color-accent);
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+            align-items: start;
+        }
+
+        .blog-card {
+            background-color: var(--color-surface);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .blog-card.hide {
+            display: none;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .blog-content {
+            padding: 1.5rem;
+        }
+
+        .blog-meta {
+            font-size: 0.8rem;
+            color: var(--color-accent);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .blog-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .blog-excerpt {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--color-surface);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 12px;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: var(--transition-smooth);
+            padding-bottom: 2rem;
+            border: 1px solid var(--color-accent);
+        }
+
+        .modal-overlay.open .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-body img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">TEJAS</div>
+        <div class="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="portfolio.html">CV</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="blog.html" class="active">Blog</a></li>
+            <li><a href="admin.html">Admin</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header container reveal">
+        <h1 class="text-accent">Thoughts & Perspectives</h1>
+        <p>Reflections on Life, Acting, and Beyond.</p>
+    </header>
+
+    <!-- Blog Area -->
+    <section class="container reveal" style="transition-delay: 0.2s;">
+        <!-- Categories -->
+        <div class="categories" id="filter-btns">
+            <button class="cat-btn active" data-filter="all">All</button>
+            <button class="cat-btn" data-filter="Spirituality">Spirituality</button>
+            <button class="cat-btn" data-filter="Fashion">Fashion</button>
+            <button class="cat-btn" data-filter="Lifestyle">Lifestyle</button>
+            <button class="cat-btn" data-filter="Life Lessons">Life Lessons</button>
+            <button class="cat-btn" data-filter="Thoughts">Thoughts</button>
+        </div>
+
+        <!-- Blog Grid -->
+        <div class="blog-grid" id="blog-posts">
+            <!-- Populated via Javascript -->
+        </div>
+    </section>
+
+    <!-- Full Article Modal Popup -->
+    <div class="modal-overlay" id="article-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-modal">&times;</button>
+            <div id="modal-img-wrapper">
+                <img id="modal-img" src="" alt="Blog Cover"
+                    style="width:100%; height:auto; display:block; border-bottom: 1px solid var(--color-border);">
+            </div>
+            <div class="modal-body">
+                <div id="modal-meta" class="blog-meta"></div>
+                <h2 id="modal-title" style="margin-bottom: 2rem;"></h2>
+                <div id="modal-text" style="color:var(--color-text); line-height:1.8;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Logic to Populate Data
+            const baseData = typeof defaultBlogData !== 'undefined' ? defaultBlogData : [];
+            const userUploads = JSON.parse(localStorage.getItem('blog_user_uploads')) || [];
+            const deletedItems = JSON.parse(localStorage.getItem('blog_deleted_items')) || [];
+            
+            const allBlogs = [...userUploads, ...baseData].filter(b => !deletedItems.includes(b.id));
+            const blogGrid = document.getElementById('blog-posts');
+            const filterBtnsContainer = document.getElementById('filter-btns');
+            
+            if(filterBtnsContainer && allBlogs.length > 0) {
+               const uniqueCategories = [...new Set(allBlogs.map(b => b.category))];
+               filterBtnsContainer.innerHTML = `<button class="cat-btn active" data-filter="all">All</button>`;
+               uniqueCategories.forEach(cat => {
+                   filterBtnsContainer.innerHTML += `<button class="cat-btn" data-filter="${cat}">${cat}</button>`;
+               });
+            }
+
+            if(allBlogs.length === 0) {
+                 blogGrid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 4rem; color: #888;">No blogs found.</div>';
+            } else {
+                blogGrid.innerHTML = '';
+                allBlogs.forEach(blog => {
+                    const fallbackImg = "https://via.placeholder.com/800x600?text=No+Image";
+                    blogGrid.innerHTML += `
+                        <article class="blog-card" data-category="${blog.category}">
+                            <img src="${blog.image_url || fallbackImg}" alt="Blog Image" class="blog-img" onerror="this.src='${fallbackImg}'">
+                            <div class="blog-content">
+                                <div class="blog-meta">${blog.category} • ${blog.readTime || '3 min read'}</div>
+                                <h3 class="blog-title">${blog.title || 'Untitled'}</h3>
+                                <p class="blog-excerpt">${blog.excerpt || ''}</p>
+                                <button class="btn btn-outline read-more" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Read More</button>
+                                <div class="full-content" style="display:none;">${blog.full_content || ''}</div>
+                            </div>
+                        </article>
+                    `;
+                });
+            }
+
+            // Category Filter Logic
+            const filterBtns = document.querySelectorAll('.cat-btn');
+            const blogCards = document.querySelectorAll('.blog-card');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active from all
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Add active to clicked
+                    btn.classList.add('active');
+
+                    const filterValue = btn.getAttribute('data-filter');
+
+                    blogCards.forEach(card => {
+                        if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                            card.classList.remove('hide');
+                        } else {
+                            card.classList.add('hide');
+                        }
+                    });
+                });
+            });
+
+            // Modal Logic for 'Read More'
+            const modalOverlay = document.getElementById('article-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalMeta = document.getElementById('modal-meta');
+            const modalTitle = document.getElementById('modal-title');
+            const modalText = document.getElementById('modal-text');
+            const readMoreBtns = document.querySelectorAll('.read-more');
+
+            readMoreBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const card = e.target.closest('.blog-card');
+
+                    // Extract data from card
+                    const imgSrc = card.querySelector('img').src;
+                    const metaTx = card.querySelector('.blog-meta').innerText;
+                    const titleTx = card.querySelector('.blog-title').innerText;
+                    const fullHTML = card.querySelector('.full-content').innerHTML;
+
+                    // Populate modal
+                    modalImg.src = imgSrc;
+                    modalMeta.innerText = metaTx;
+                    modalTitle.innerText = titleTx;
+                    modalText.innerHTML = fullHTML;
+
+                    // Open modal
+                    modalOverlay.classList.add('open');
+                    document.body.style.overflow = 'hidden'; // Stop background scrolling
+                });
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                modalOverlay.classList.remove('open');
+                document.body.style.overflow = 'auto'; // Restore background scrolling
+            });
+
+            // Close on outside click
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    modalOverlay.classList.remove('open');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
